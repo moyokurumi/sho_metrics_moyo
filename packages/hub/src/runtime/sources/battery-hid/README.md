@@ -37,3 +37,18 @@ addition.
 When porting from another language, keep protocol facts traceable: report
 layout, feature IDs, command bytes, payload offsets, enum decoding, and timeout
 semantics should all point back to the source implementation.
+
+## Razer Naga V3 Pro (Windows)
+
+The initial Razer route is experimental and limited to the original Naga V3
+Pro HyperSpeed USB receiver (1532:00e8). The wired PID, Mouse Dock, shared
+receivers, and other Razer models are not part of this route. Razer Synapse
+is not required; Bluetooth continues to use the existing OS battery path.
+
+Windows on the target device exposed the control collection as MI_03, usage
+page 0x0001, usage 0x0003. This matches the USB index in
+[OpenRazer PR #2904](https://github.com/openrazer/openrazer/pull/2904).
+[MacRazer issue #33](https://github.com/SorcRR/MacRazer/issues/33) documents a
+successful battery query on this receiver; its device table uses transaction
+0x1f. The [razer-battery protocol reference](https://github.com/andrzej-zuralovic/razer-battery/blob/main/src/protocol.rs)
+documents the request, checksum, and byte-scale battery field. On Windows, an awake mouse returned 92% through MI_03 with Synapse running. A response delay of 100 ms consistently picked up unrelated Synapse traffic, so the reader uses a small number of short attempts and validates the echoed command and CRC. An offline receiver is never published as 0%.

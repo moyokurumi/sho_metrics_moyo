@@ -14,6 +14,7 @@ import type {
 import { loadNativeHidModule } from "./native-hid-loader";
 import { AsusRogBatteryReader } from "./asus-rog/asus-rog-battery-discovery";
 import { LogitechBatteryReader } from "./logitech/battery-discovery/logitech-battery-discovery";
+import { RazerBatteryReader } from "./razer/razer-battery-reader";
 import { VENDOR_HID_BATTERY_SOURCE_ID } from "../source-ids";
 import type {
     MetricUnavailableReport,
@@ -803,6 +804,7 @@ function createVendorHidBatteryReaders(nativeHidModule: NativeHidModule): readon
     return [
         { name: "logitech", reader: new LogitechBatteryReader(nativeHidModule) },
         { name: "asusRog", reader: new AsusRogBatteryReader(nativeHidModule) },
+        ...(process.platform === "win32" ? [{ name: "razer", reader: new RazerBatteryReader(nativeHidModule) }] : []),
     ];
 }
 
